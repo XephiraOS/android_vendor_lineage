@@ -166,3 +166,41 @@ PRODUCT_PRODUCT_PROPERTIES += \
     ro.lineage.display.version=$(XEPHIRA_DISPLAY_VERSION) \
     ro.lineage.build.version=$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR) \
     ro.lineage.releasetype=$(XEPHIRA_BUILD_TYPE)
+
+# ═══════════════════════════════════════════════════════════════════
+#             Device Tree Custom Hardware Properties
+# ═══════════════════════════════════════════════════════════════════
+
+# Optional maintainer profile URL
+ifdef XEPHIRA_MAINTAINER_URL
+    PRODUCT_PRODUCT_PROPERTIES += ro.xephira.maintainer.url=$(strip $(XEPHIRA_MAINTAINER_URL))
+endif
+
+# Optional SoC / Processor model override (e.g. "Snapdragon 8 Gen 2", "Tensor G3")
+ifndef XEPHIRA_SOC
+    ifdef TARGET_SOC
+        XEPHIRA_SOC := $(TARGET_SOC)
+    endif
+endif
+ifdef XEPHIRA_SOC
+    XEPHIRA_SOC_PROP := $(subst $(space),_,$(strip $(subst ",,$(subst ',,$(XEPHIRA_SOC)))))
+    PRODUCT_PRODUCT_PROPERTIES += ro.xephira.soc=$(XEPHIRA_SOC_PROP)
+endif
+
+# Optional Battery capacity override (e.g. "5000 mAh")
+ifdef XEPHIRA_BATTERY
+    XEPHIRA_BATTERY_PROP := $(subst $(space),_,$(strip $(subst ",,$(subst ',,$(XEPHIRA_BATTERY)))))
+    PRODUCT_PRODUCT_PROPERTIES += ro.xephira.battery=$(XEPHIRA_BATTERY_PROP)
+endif
+
+# Optional Display specification override (e.g. "6.7\" 120Hz AMOLED")
+ifdef XEPHIRA_DISPLAY_SPEC
+    XEPHIRA_DISPLAY_SPEC_PROP := $(subst $(space),_,$(strip $(subst ",,$(subst ',,$(XEPHIRA_DISPLAY_SPEC)))))
+    PRODUCT_PRODUCT_PROPERTIES += ro.xephira.display=$(XEPHIRA_DISPLAY_SPEC_PROP)
+endif
+
+# Optional Camera specification override (e.g. "50MP Main + 12MP Ultra-wide")
+ifdef XEPHIRA_CAMERA
+    XEPHIRA_CAMERA_PROP := $(subst $(space),_,$(strip $(subst ",,$(subst ',,$(XEPHIRA_CAMERA)))))
+    PRODUCT_PRODUCT_PROPERTIES += ro.xephira.camera=$(XEPHIRA_CAMERA_PROP)
+endif
