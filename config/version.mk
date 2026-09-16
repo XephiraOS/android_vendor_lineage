@@ -52,8 +52,49 @@ ifeq ($(filter OFFICIAL UNOFFICIAL COMMUNITY NIGHTLY RELEASE EXPERIMENTAL,$(XEPH
     XEPHIRA_BUILD_TYPE := UNOFFICIAL
 endif
 
-# Maintainer Information
-XEPHIRA_MAINTAINER ?= UNKNOWN
+# ═══════════════════════════════════════════════════════════════════
+#                    Maintainer Information
+# ═══════════════════════════════════════════════════════════════════
+
+empty :=
+space := $(empty) $(empty)
+
+# Resolve maintainer from all common environment & makefile variables
+ifndef XEPHIRA_MAINTAINER
+    ifdef LINEAGE_MAINTAINER
+        XEPHIRA_MAINTAINER := $(LINEAGE_MAINTAINER)
+    else ifdef DEVICE_MAINTAINER
+        XEPHIRA_MAINTAINER := $(DEVICE_MAINTAINER)
+    else ifdef PRODUCT_MAINTAINER
+        XEPHIRA_MAINTAINER := $(PRODUCT_MAINTAINER)
+    else ifdef TARGET_MAINTAINER
+        XEPHIRA_MAINTAINER := $(TARGET_MAINTAINER)
+    else ifdef MAINTAINER
+        XEPHIRA_MAINTAINER := $(MAINTAINER)
+    endif
+endif
+
+# Strip quotes and leading/trailing whitespace
+XEPHIRA_MAINTAINER := $(subst ",,$(XEPHIRA_MAINTAINER))
+XEPHIRA_MAINTAINER := $(subst ',,$(XEPHIRA_MAINTAINER))
+XEPHIRA_MAINTAINER := $(strip $(XEPHIRA_MAINTAINER))
+
+ifeq ($(XEPHIRA_MAINTAINER),)
+    XEPHIRA_MAINTAINER := UNKNOWN
+endif
+
+# System properties cannot contain raw spaces in PRODUCT_PRODUCT_PROPERTIES
+# because build/make/core/sysprop.mk treats spaces as property delimiters.
+# We convert spaces to underscores for the system property while keeping
+# XEPHIRA_MAINTAINER untouched for terminal banners and logs.
+XEPHIRA_MAINTAINER_PROP := $(subst $(space),_,$(XEPHIRA_MAINTAINER))
+
+# Helper macro to update maintainer if defined later in device makefile
+define xephira-set-maintainer
+    $(eval XEPHIRA_MAINTAINER := $(strip $(subst ",,$(subst ',,$(1)))))
+    $(eval XEPHIRA_MAINTAINER_PROP := $(subst $$(space),_,$(XEPHIRA_MAINTAINER)))
+    $(eval PRODUCT_PRODUCT_PROPERTIES += ro.xephira.maintainer=$(XEPHIRA_MAINTAINER_PROP) ro.lineage.maintainer=$(XEPHIRA_MAINTAINER_PROP))
+endef
 
 # Date & Timestamps
 XEPHIRA_DATE_YEAR  := $(shell date -u +%Y)
@@ -118,7 +159,8 @@ PRODUCT_PRODUCT_PROPERTIES += \
     ro.xephira.device=$(TARGET_PRODUCT_SHORT) \
     ro.xephira.version=$(XEPHIRAVERSION) \
     ro.xephira.edition=$(XEPHIRA_EDITION) \
-    ro.xephira.maintainer=$(XEPHIRA_MAINTAINER) \
+    ro.xephira.maintainer=$(XEPHIRA_MAINTAINER_PROP) \
+    ro.lineage.maintainer=$(XEPHIRA_MAINTAINER_PROP) \
     ro.modversion=$(XEPHIRA_VERSION) \
     ro.lineage.version=$(XEPHIRA_VERSION) \
     ro.lineage.display.version=$(XEPHIRA_DISPLAY_VERSION) \
