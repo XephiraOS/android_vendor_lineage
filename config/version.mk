@@ -56,8 +56,8 @@ endif
 #                    Maintainer Information
 # ═══════════════════════════════════════════════════════════════════
 
-empty :=
-space := $(empty) $(empty)
+_xephira_empty :=
+_xephira_space := $(_xephira_empty) $(_xephira_empty)
 
 # Resolve maintainer from all common environment & makefile variables
 ifndef XEPHIRA_MAINTAINER
@@ -87,12 +87,12 @@ endif
 # because build/make/core/sysprop.mk treats spaces as property delimiters.
 # We convert spaces to underscores for the system property while keeping
 # XEPHIRA_MAINTAINER untouched for terminal banners and logs.
-XEPHIRA_MAINTAINER_PROP := $(subst $(space),_,$(XEPHIRA_MAINTAINER))
+XEPHIRA_MAINTAINER_PROP := $(subst $(_xephira_space),_,$(XEPHIRA_MAINTAINER))
 
 # Helper macro to update maintainer if defined later in device makefile
 define xephira-set-maintainer
     $(eval XEPHIRA_MAINTAINER := $(strip $(subst ",,$(subst ',,$(1)))))
-    $(eval XEPHIRA_MAINTAINER_PROP := $(subst $$(space),_,$(XEPHIRA_MAINTAINER)))
+    $(eval XEPHIRA_MAINTAINER_PROP := $(subst $$(_xephira_space),_,$(XEPHIRA_MAINTAINER)))
     $(eval PRODUCT_PRODUCT_PROPERTIES += ro.xephira.maintainer=$(XEPHIRA_MAINTAINER_PROP) ro.lineage.maintainer=$(XEPHIRA_MAINTAINER_PROP))
 endef
 
@@ -183,24 +183,24 @@ ifndef XEPHIRA_SOC
     endif
 endif
 ifdef XEPHIRA_SOC
-    XEPHIRA_SOC_PROP := $(subst $(space),_,$(strip $(subst ",,$(subst ',,$(XEPHIRA_SOC)))))
+    XEPHIRA_SOC_PROP := $(subst $(_xephira_space),_,$(strip $(subst ",,$(subst ',,$(XEPHIRA_SOC)))))
     PRODUCT_PRODUCT_PROPERTIES += ro.xephira.soc=$(XEPHIRA_SOC_PROP)
 endif
 
 # Optional Battery capacity override (e.g. "5000 mAh")
 ifdef XEPHIRA_BATTERY
-    XEPHIRA_BATTERY_PROP := $(subst $(space),_,$(strip $(subst ",,$(subst ',,$(XEPHIRA_BATTERY)))))
+    XEPHIRA_BATTERY_PROP := $(subst $(_xephira_space),_,$(strip $(subst ",,$(subst ',,$(XEPHIRA_BATTERY)))))
     PRODUCT_PRODUCT_PROPERTIES += ro.xephira.battery=$(XEPHIRA_BATTERY_PROP)
 endif
 
 # Optional Display specification override (e.g. "6.7\" 120Hz AMOLED")
 ifdef XEPHIRA_DISPLAY_SPEC
-    XEPHIRA_DISPLAY_SPEC_PROP := $(subst $(space),_,$(strip $(subst ",,$(subst ',,$(XEPHIRA_DISPLAY_SPEC)))))
+    XEPHIRA_DISPLAY_SPEC_PROP := $(subst $(_xephira_space),_,$(strip $(subst ",,$(subst ',,$(XEPHIRA_DISPLAY_SPEC)))))
     PRODUCT_PRODUCT_PROPERTIES += ro.xephira.display=$(XEPHIRA_DISPLAY_SPEC_PROP)
 endif
 
 # Optional Camera specification override (e.g. "50MP Main + 12MP Ultra-wide")
 ifdef XEPHIRA_CAMERA
-    XEPHIRA_CAMERA_PROP := $(subst $(space),_,$(strip $(subst ",,$(subst ',,$(XEPHIRA_CAMERA)))))
+    XEPHIRA_CAMERA_PROP := $(subst $(_xephira_space),_,$(strip $(subst ",,$(subst ',,$(XEPHIRA_CAMERA)))))
     PRODUCT_PRODUCT_PROPERTIES += ro.xephira.camera=$(XEPHIRA_CAMERA_PROP)
 endif
