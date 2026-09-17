@@ -8,17 +8,18 @@ $(call inherit-product-if-exists, external/google-fonts/google-sans-flex/fonts.m
 
 # Apps
 PRODUCT_PACKAGES += \
+    Profiles
+
+# Exclude obsolete Lineage stock apps
+PRODUCT_PACKAGES_EXCLUDE += \
+    Aperture \
     Camelot \
     Etar \
-    Profiles \
+    Glimpse \
+    Jelly \
     Recorder \
     Seedvault \
     Twelve
-
-ifneq ($(PRODUCT_NO_CAMERA),true)
-PRODUCT_PACKAGES += \
-    Aperture
-endif
 
 ifneq ($(TARGET_EXCLUDES_AUDIOFX),true)
 PRODUCT_PACKAGES += \

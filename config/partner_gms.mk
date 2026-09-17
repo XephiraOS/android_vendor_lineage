@@ -22,7 +22,26 @@ ifeq ($(WITH_GMS),true)
                 $(call inherit-product-if-exists, vendor/partner_gms-car/products/gms.mk)
             endif
         endif
-   else
+        # Pixel / GMS Prebuilts
+        ifneq (,$(wildcard vendor/gms))
+            ifeq ($(TARGET_USES_PICO_GAPPS),true)
+                $(call inherit-product, vendor/gms/gms_pico.mk)
+            else ifeq ($(TARGET_USES_MINI_GAPPS),true)
+                $(call inherit-product, vendor/gms/gms_mini.mk)
+            else
+                $(call inherit-product, vendor/gms/gms_full.mk)
+            endif
+
+            # Pixel style and icon overlays
+            $(call inherit-product-if-exists, vendor/google/overlays/ThemeIcons/config.mk)
+            $(call inherit-product-if-exists, vendor/pixel-style/config/common.mk)
+
+            # Don't dexpreopt prebuilts for GMS
+            DONT_DEXPREOPT_PREBUILTS := true
+        else ifneq (,$(wildcard vendor/gapps))
+            $(call inherit-product-if-exists, vendor/gapps/gapps.mk)
+        endif
+
         ifneq (,$(wildcard vendor/partner_gms))
             # Specify the GMS makefile you want to use, for example:
             #   - fi.mk             - Project Fi
