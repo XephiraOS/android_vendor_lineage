@@ -22,6 +22,8 @@ ifeq ($(WITH_GMS),true)
                 $(call inherit-product-if-exists, vendor/partner_gms-car/products/gms.mk)
             endif
         endif
+    # Standard Mobile / Phone / Tablet
+    else
         # Pixel / GMS Prebuilts
         ifneq (,$(wildcard vendor/gms))
             ifeq ($(TARGET_USES_PICO_GAPPS),true)
@@ -67,4 +69,7 @@ ifeq ($(WITH_GMS),true)
             endif
         endif
     endif
+
+    # Propagate GMS flag to GAPPS for versioning and package flavor
+    WITH_GAPPS := true
 endif
