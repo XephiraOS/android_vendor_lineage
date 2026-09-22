@@ -1,4 +1,4 @@
-ifeq ($(WITH_GMS),true)
+ifeq ($(filter true,$(WITH_GMS) $(WITH_GAPPS)),true)
     # Special handling for Android TV
     ifeq ($(PRODUCT_IS_ATV),true)
         ifneq (,$(wildcard vendor/partner_gms-tv))

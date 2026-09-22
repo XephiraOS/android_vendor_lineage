@@ -121,7 +121,7 @@ else
 endif
 
 # Package Flavor (VANILLA vs GAPPS)
-ifeq ($(WITH_GAPPS), true)
+ifeq ($(filter true,$(WITH_GMS) $(WITH_GAPPS)),true)
     XEPHIRA_EDITION := GAPPS
 else
     XEPHIRA_EDITION := VANILLA

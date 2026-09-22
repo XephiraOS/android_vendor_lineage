@@ -19,9 +19,31 @@ When bringing up a device for XephiraOS or maintaining an official/unofficial de
 | **`XEPHIRA_DISPLAY_SPEC`** | `"6.7\" 120Hz FHD+ AMOLED"` | `ro.xephira.display` | Marketing display specifications displayed in hardware info. |
 | **`XEPHIRA_CAMERA`** | `"50MP Main + 12MP Ultra-wide"` | `ro.xephira.camera` | Camera sensor configuration summary. |
 | **`XEPHIRA_BUILD_TYPE`** | `OFFICIAL` / `UNOFFICIAL` / `COMMUNITY` | `ro.xephira.buildtype`<br>`ro.xephira.build.status` | Release channel. Defaults to `UNOFFICIAL`. |
-| **`WITH_GAPPS`** | `true` or `false` | `ro.xephira.edition` | Sets edition to `GAPPS` or `VANILLA`. |
+| **`WITH_GMS`** / **`WITH_GAPPS`** | `true` or `false` | `ro.xephira.edition` | Enables GMS prebuilts integration. Sets edition to `GAPPS` or `VANILLA`. Automatically skips duplicate Lineage stock bloat. |
+| **`TARGET_USES_MINI_GAPPS`** | `true` or `false` | Internal make flag | When building with GMS, selects `vendor/gms/gms_mini.mk` instead of full GMS. |
+| **`TARGET_USES_PICO_GAPPS`** | `true` or `false` | Internal make flag | When building with GMS, selects `vendor/gms/gms_pico.mk` (minimal Play Services & Store). |
 
 ---
+
+## 📦 GMS, GAPPS & Stock App Management Architecture
+
+XephiraOS employs a clean, conditional architecture for Google Mobile Services (inspired by Evolution X) that cleanly separates Vanilla and GApps builds without requiring destructive package exclusion lists or project removals.
+
+### 🌟 How It Works
+1. **Clean Stock Bloatware Exclusion**:
+   Instead of using `PRODUCT_PACKAGES_EXCLUDE`, stock Lineage applications that duplicate Google equivalents are guarded by `ifeq ($(filter true,$(WITH_GMS) $(WITH_GAPPS)),)`:
+   * **`config/common_mobile.mk`**: `Backgrounds`, `Glimpse` (Gallery)
+   * **`config/common_mobile_full.mk`**: `Camelot` (Notes), `Etar` (Calendar), `Recorder`, `Twelve` (Music), and `AudioFX`
+   * In GMS/GAPPS builds, these apps are **never added to the build graph**, ensuring zero conflicts with Google Photos, Calendar, and YT Music.
+2. **Modular GMS Ingestion**:
+   In `config/common_full_phone.mk`, when `WITH_GMS` or `WITH_GAPPS` is `true`, the build system selects the appropriate prebuilt package:
+   * **Full GMS** (Default): `vendor/gms/gms_full.mk`
+   * **Mini GMS**: `vendor/gms/gms_mini.mk` (via `TARGET_USES_MINI_GAPPS := true`)
+   * **Pico GMS**: `vendor/gms/gms_pico.mk` (via `TARGET_USES_PICO_GAPPS := true`)
+3. **Optimizations & Theming**:
+   * **Dexpreopt Preservation**: `DONT_DEXPREOPT_PREBUILTS := true` is set automatically to prevent de-optimizing prebuilt GMS binaries.
+   * **ThemeIcons Overlay**: Inherits `vendor/google/overlays/ThemeIcons/config.mk` when present.
+   * **ClientID Base**: Configures `ro.com.google.clientidbase=android-google`.
 
 ## 📝 Example Device Makefile Configuration
 

@@ -18,6 +18,14 @@ PRODUCT_PRODUCT_PROPERTIES += \
     ro.com.google.clientidbase=$(PRODUCT_GMS_CLIENTID_BASE)
 endif
 
+# GMS additions
+ifeq ($(filter true,$(WITH_GMS) $(WITH_GAPPS)),true)
+$(call inherit-product-if-exists, vendor/google/overlays/ThemeIcons/config.mk)
+
+# Don't dexpreopt prebuilts for GMS
+DONT_DEXPREOPT_PREBUILTS := true
+endif
+
 ifeq ($(PRODUCT_IS_ATV),true)
 ifeq ($(PRODUCT_ATV_CLIENTID_BASE),)
 PRODUCT_PRODUCT_PROPERTIES += \
@@ -86,10 +94,6 @@ PRODUCT_COPY_FILES += \
 # Enable SIP+VoIP on all targets
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.sip.voip.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/android.software.sip.voip.xml
-
-# Credential storage
-PRODUCT_PACKAGES += \
-    android.software.credentials.prebuilt.xml
 
 # Enable wireless Xbox 360 controller support
 PRODUCT_COPY_FILES += \

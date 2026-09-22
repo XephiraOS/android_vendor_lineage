@@ -16,9 +16,13 @@ PRODUCT_PRODUCT_PROPERTIES += \
 # Apps
 PRODUCT_PACKAGES += \
     AvatarPicker \
-    Backgrounds \
-    Glimpse \
     LatinIME
+
+ifeq ($(filter true,$(WITH_GMS) $(WITH_GAPPS)),)
+PRODUCT_PACKAGES += \
+    Backgrounds \
+    Glimpse
+endif
 
 ifeq ($(PRODUCT_TYPE), go)
 PRODUCT_PACKAGES += \
@@ -46,6 +50,10 @@ PRODUCT_PACKAGES += \
     lineage_charger_animation \
     lineage_charger_animation_vendor
 endif
+
+# Credential storage
+PRODUCT_PACKAGES += \
+    android.software.credentials.prebuilt.xml
 
 # Legal
 PRODUCT_PRODUCT_PROPERTIES += \
