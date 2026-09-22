@@ -11,7 +11,7 @@ PRODUCT_PACKAGES += \
     Profiles \
     Seedvault
 
-ifeq ($(filter true,$(WITH_GMS) $(WITH_GAPPS)),)
+ifeq ($(WITH_GMS),false)
 PRODUCT_PACKAGES += \
     Camelot \
     Etar \
@@ -24,7 +24,7 @@ PRODUCT_PACKAGES += \
     Aperture
 endif
 
-ifeq ($(filter true,$(WITH_GMS) $(WITH_GAPPS)),)
+ifeq ($(WITH_GMS),false)
 ifneq ($(TARGET_EXCLUDES_AUDIOFX),true)
 PRODUCT_PACKAGES += \
     AudioFX
